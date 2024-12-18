@@ -47,47 +47,51 @@ library(dplyr)
 # Packages cartographiques
 library(sf)
 library(mapsf)
+library(RColorBrewer)
 
 ```
-
 
 > Le résumé de votre fiche dans cet encart
 
-# Introduction {-}
+# Introduction {.unnumbered}
 
-Rédigez en [langage de balisage **markdown**](https://fr.wikipedia.org/wiki/Markdown) pour mettre en forme votre texte. 
+Rédigez en [langage de balisage **markdown**](https://fr.wikipedia.org/wiki/Markdown) pour mettre en forme votre texte.
 
-Si vous avez besoin de définir un mot/expression, utilisez la syntaxe suivante : Mot/expression à définir^[__Mot/expression à définir__ Définition du mot/expression... etc.]   
-La définition sera automatiquement ajoutée dans la partie [**Glossaire**](#endnotes).   
+Si vous avez besoin de définir un mot/expression, utilisez la syntaxe suivante : Mot/expression à définir[^1]\
+La définition sera automatiquement ajoutée dans la partie [**Glossaire**](#endnotes).
 
-Pour afficher une référence bibliographique, ajoutez-la dans le fichier biblio.bib en format [BibTeX](https://fr.wikipedia.org/wiki/BibTeX).    
-Vous pouvez ensuite l'appeler dans le corps document de cette manière : @R-base  
+[^1]: **Mot/expression à définir** Définition du mot/expression... etc.
+
+Pour afficher une référence bibliographique, ajoutez-la dans le fichier biblio.bib en format [BibTeX](https://fr.wikipedia.org/wiki/BibTeX).\
+Vous pouvez ensuite l'appeler dans le corps document de cette manière : @R-base\
 Toutes les références indiquées dans le fichier biblio.bib sont automatiquement ajoutées dans la [**Bibliographie**](#bibliographie).
 
-Il est possible d'écrire des formules mathématiques en langage $\TeX$. Pour cela, il suffit de délimiter le contenu $\LaTeX$ par **un ou deux** symboles **$**, ex :  
+Il est possible d'écrire des formules mathématiques en langage $\TeX$. Pour cela, il suffit de délimiter le contenu $\LaTeX$ par **un ou deux** symboles **\$**, ex :
 
-```
+```         
 $$ y = \sqrt{\frac{1}{x + \beta}} $$ 
 ```
-En mode ***Inline*** (**1 $**) , les formules sont incluses à l'intérieur du paragraphe courant, ex : $\sum_{i=1}^n X_i$    
-En mode ***Displayed*** (**2 $**), elles apparaissent centrées et mises en exergue, ex : $$ y = \sqrt{\frac{1}{x + \beta}} $$   
 
+En mode ***Inline*** (**1 \$**) , les formules sont incluses à l'intérieur du paragraphe courant, ex : $\sum_{i=1}^n X_i$\
+En mode ***Displayed*** (**2 \$**), elles apparaissent centrées et mises en exergue, ex : $$ y = \sqrt{\frac{1}{x + \beta}} $$
 
 Pour mettre en valeur un bloc de texte, vous pouvez utilisez une **div** ***alert-success*** [**bootstrap**](https://getbootstrap.com/docs/4.0/components/alerts/) comme ceci :
-<div class="alert alert-success" role="alert">
-Mettre en valeur un bloc de texte...</div>
 
+::: {.alert .alert-success role="alert"}
+Mettre en valeur un bloc de texte...
+:::
 
 Pour afficher une information importante, vous pouvez utilisez une **div** ***alert-danger*** [**bootstrap**](https://getbootstrap.com/docs/4.0/components/alerts/) comme ceci :
-<div class="alert alert-danger" role="alert">
-Afficher une information importante...</div>
 
+::: {.alert .alert-danger role="alert"}
+Afficher une information importante...
+:::
 
-Pour afficher une image dans le corps du document, utilisez un chunk  : 
+Pour afficher une image dans le corps du document, utilisez un chunk :
+
 ```{r, echo=FALSE, out.width="50%",  fig.align = 'center'}
 knitr::include_graphics("figures/rzine.png")
 ```
-
 
 # Partie A
 
@@ -125,31 +129,28 @@ knitr::include_graphics("figures/rzine.png")
 
 ## Partie D.2
 
+# Bibliographie {#bibliographie .unnumbered}
 
+::: {#refs}
+:::
 
-# Bibliographie {-}
+# Annexes {.unnumbered}
 
-<div id="refs"></div>
+## Source des données brutes {.unnumbered}
 
+-   le fichier **résultats-définitifs-par-circonscriptions.csv** est accesible sur le site data.gouv.fr en suivant [ce lien](https://www.data.gouv.fr/fr/datasets/resultats-des-elections-europeennes-du-9-juin-2024/). Il présente les résultats définitifs des élections europénnes et a pour origine le Ministère de l'Intérieur. Comme il est très complexe (beaucoup de colonnes redondantes) nous l'avons modifié pour créer des fichiers ne contenant que les colonnes indispensables (effectifs)
 
+-   le fichier **candidats-eur-2024.xlsx** est accessible sur le site data.gouv.fr en suivant [ce lien](ttps://www.data.gouv.fr/fr/datasets/elections-europeennes-du-9-juin-2024-candidatures-enregistrees/). Produit par le ministère de l'intérieur il fournit une information detaillée sur les candidats de chacune des listes. Nous allons en extraire uniquement les caractéristiques des têtes de liste afin de produire un tableau de métadonnées sur les 38 têtes de listes.
 
-# Annexes {-}
+-   le fichier **indic-stat-circonscriptions-legislatives-2022.xls** a été produit par l'INSEE et est accessible en suivant [ce lien](https://www.insee.fr/fr/statistiques/6436476?sommaire=6436478). Il fournit un ensemble de données de cadrage sociales et économiques sur les circonscriptions législatives de France à partir des données du recensement de 2022 et de quelques autres sources. Il ne sera pas utilisé directement mais peut servir pour des exercices complémentaires.
 
-## Source des données brutes {-}
+-   le fichier **circo_composition.xls** également accessible sur le [même lien](https://www.insee.fr/fr/statistiques/6436476?sommaire=6436478) permet de mettre en rapport les circonscription avec les départements, les régions ou les communes. Sachant qu'une même commune peut participer à deux circonscriptions ou plus. On s'en servira principalement pour établir le lien entre circonscriptions et régions.
 
-- le fichier *résultats-définitifs-par-circonscriptions.csv* qui se trouve dans le dossier **data/raw** est accesible sur le site data.gouv.fr en suivant [ce lien](https://www.data.gouv.fr/fr/datasets/resultats-des-elections-europeennes-du-9-juin-2024/). Il présente les résultats définitifs des élections europénnes et a pour origine le Ministère de l'Intérieur. Comme il est très complexe (beaucoup de colonnes redondantes) nous l'avons largement modifié pour créer les fichiers *don-circ.csv* et *don-circ.RDS* qui se trouvent dans le dossier **data/net**.
+-   le fichier **france_circonsscriptions_legislatives_2012.json** contient un fonds de carte simplifié des circonscriptions législatives en vigueur depuis 2012. C'est une reprise du travail de Toxicode. L'Atelier de cartographie de Sciences Po à ensuite vérifié, nettoyé et généralisé le fond. Il est accessible sur le site data.gouv.fr en suivant [ce lien](https://www.data.gouv.fr/fr/datasets/carte-des-circonscriptions-legislatives-2012-et-2017/#/resources). Il est beaucoup plus léger et mieux généralisé que le fonds de carte fournit par l'INSEE avec les deux ressources précédentes
 
-- le fichier *indic-stat-circonscriptions-legislatives-2022.xls* se trouve également dans le dossier **data/raw** a été produit par l'INSEE et est accessible en suivant [ce lien](https://www.insee.fr/fr/statistiques/6436476?sommaire=6436478). Il fournit un ensemble de données de cadrage sociales et économiques sur les circonscriptions législatives de France à partir des données du recensement de 2022 et de quelques autres sources. 
+## Préparation des données géométriques {.unnumbered}
 
-- le fichier *circo_composition.xls* également accessible sur le même lien permet de mettre en rapport les circonscription avec les départements, les régions ou les communes. Sachant qu'une même commune peut participer à deux circonscriptions ou plus. On s'en servira principalement pour établir le lien entre circonscriptions et régions. 
-
-- le fichier *france_circonsscriptions_legislatives_2012.json* contient un fichier simplifié des circonscriptions législatives en vigueur depuis 2012.  C'est une reprise du travail de Toxicode. L'Atelier de cartographie de Sciences Po à ensuite vérifié, nettoyé et généralisé le fond. Il est accessible sur le site data.gouv.fr en suivant  [ce lien](https://www.data.gouv.fr/fr/datasets/carte-des-circonscriptions-legislatives-2012-et-2017/#/resources).  Il est beaucoup plus léger et mieux généralisé que le fonds de carte fournit par l'INSEE avec les deux ressources précédentes
-
-
-
-## Préparation des données géométriques {-}
-
-On charge le fichier des circonscriptions en ne conservant que les données de France métropolitaine hors Corse, soit 533 circonscriptions. On le projette en EPSG 2154 puis on l'agrège par département et régions pôir disposer de trois fonds de cartes. 
+On charge le fichier des circonscriptions en ne conservant que les données de France métropolitaine hors Corse, soit 533 circonscriptions. On le projette en EPSG 2154 puis on l'agrège par département et régions pour disposer de trois fonds de cartes.
 
 ```{r, eval=FALSE}
 
@@ -185,8 +186,7 @@ saveRDS(map_circ, "data/net/map_circ.RDS")
 map_dept <- map_circ %>% group_by(dept) %>%
                         summarize(dept_nom=min(dept_nom),
                                   regi=min(regi),
-                                  regi_nom = min(regi_nom)) %>%
-                        st_buffer(dist=200)
+                                  regi_nom = min(regi_nom)) 
 saveRDS(map_dept, "data/net/map_dept.RDS")
 
 # Agrège par région
@@ -216,30 +216,170 @@ Auteur : Claude Grasland, 2024",
 
 ```
 
-## Préparation des données électorales {-}
+## Préparation des données électorales {.unnumbered}
 
-Nous allons extraire du fichier électoral les effectifs bruts de vote pour les candidats des différentes listes en remplaçant le nom de la liste par celui du candidat et en ne retenant queles candidats qui ont reçu des voix dans toutes les circonscriptions. Les candidats qui n'ont pas reçu de voix dans toutes les circonscriptions seront placés dans la catégorie "Autres". 
+Nous allons extraire du fichier électoral les variables générales de cadrage (inscrits, votants, blancs,nuls, ...) et les effectifs bruts de vote pour les candidats des différentes listes par circonscription. Ces deux tableaux seront ensuite agrégés par départements et régions
 
+```{r, eval = FALSE}
+x<-read.csv2("data/raw/resultats-definitifs-par-circonscription.csv")
 
-
-
-
-
-
-
-
+# Modification du code des circonscriptions popur adéquation avec les fonds de carte
+z<-x$Code.circonscription.législative
+x$circ<-paste0(substr(z,1,2),"0",substr(z,3,4))
 
 
 
 
-## Info session  {-}
+# Variables générales
+gen<- x  %>% select(circ ,
+                  ins = Inscrits,
+                  vot = Votants,
+                  abs = Abstentions,
+                  bla = Blancs,
+                  nul = Nuls,
+                  exp = Exprimés)
+
+
+# Ajout des clés d'agrégation géographiques
+map_circ<-readRDS("data/net/map_circ.RDS")
+geo<-st_drop_geometry(map_circ)
+gen<-left_join(geo,gen)
+
+# Ajout des suffrages par liste
+vot <- x[,substr(names(x),1,5) =="Voix."]
+a<-rep("vot",38)
+b<-1:38
+z<-paste0(a,b)
+names(vot)<-z
+vot$circ<-x$circ
+vot<-vot[,c(39,1:38)]
+
+# Tableau final des circonscriptions
+don_circ<-left_join(gen,vot)
+saveRDS(don_circ,"data/net/don_circ.RDS")
+kable(head(don_circ), caption = "Résultats électoraux par circonscription")
+
+# Agrégation par départements
+don_dept <-don_circ %>% group_by(dept, dept_nom, regi, regi_nom) %>% summarise_at(2:45,sum)
+saveRDS(don_dept,"data/net/don_dept.RDS")
+kable(head(don_dept), caption = "Résultats électoraux par département")
+
+# Agrégation par régions
+don_regi <-don_circ %>% group_by(regi, regi_nom) %>% summarise_at(4:47,sum)
+saveRDS(don_regi,"data/net/don_regi.RDS")
+kable(head(don_regi), caption = "Résultats électoraux par région")
+
+# Métadonnées sur les têtes de listes
+m<-read_xlsx("data/raw/candidats-eur-2024.xlsx") 
+m<-m %>% filter(Ordre ==1) %>%
+    select(code =`Numéro de panneau`,
+           nom = `Libellé de la liste`,
+           tete_nom = `Nom sur le bulletin de vote`,
+           tete_prenom = `Prénom sur le bulletin de vote`,
+           tete_sexe = Sexe,
+           tete_nais =`Date de naissance`)
+
+ # Ajout de la nuance politique selon le ministère de l'intérieur
+typol <- as.character(x[1,substr(names(x),1,6) =="Nuance"] )  
+m$typol<-typol
+saveRDS(m,"data/net/don_listes.RDS")
+kable(m, caption = "Description des listes")
+
+
+```
+
+
+## Vérifications {.unnumbered}
+
+### Agrégation 
+
+On vérifie tout d'abord que la procédure d'agrégation a bien donné bien les mêmes totaux au niveau des circonscriptions, départements et régions. Il apparaît que pour chaque niveau le nombre total d'inscrits est bien le même et il ne semble pas utile de vérifier les autres colonnes.
+
+```{r}
+sum(don_circ$ins)
+sum(don_dept$ins)
+sum(don_regi$ins)
+```
+
+
+### Jointure
+
+On affiche trois cartes du vote pour la liste n°5 (Bardella) afin de vérifier si les jointures s'opèrent correctement entre données géométriques et statistiques.
+
+```{r}
+# Chargement des données géométriques
+map_circ <- readRDS("data/net/map_circ.RDS")
+map_dept <- readRDS("data/net/map_dept.RDS")
+map_regi <- readRDS("data/net/map_regi.RDS")
+
+# Chargement des données statistiques
+don_circ <- readRDS("data/net/don_circ.RDS")
+don_dept <- readRDS("data/net/don_dept.RDS")
+don_regi <- readRDS("data/net/don_regi.RDS")
+
+# Choix de la palette et des classes
+mypal <-brewer.pal(9,"Blues")
+mybreaks=c(0,15,20,25,30,35,40, 45,50,100)
+
+# Carte par région
+mapdon <- left_join(map_regi, don_regi) %>% 
+          mutate(vot = vot5, pct = 100*vot5/exp) %>%
+          select(vot,pct)
+mf_map(mapdon, type="choro", var="pct", 
+       breaks=mybreaks,
+       pal=mypal,
+       leg_val_rnd = 0, leg_pos = "left", leg_title = "% suffrages exprimés")
+mf_map(mapdon, type="prop", var="vot", inches = 0.1, leg_pos="topleft", leg_title = "Nb. de voix")
+mf_layout(title = "Vote Bardella aux élections européennes de 2024 par régions",
+          credits = "Source : INSEE, IGN, Ministère de l'Intérieur",
+          frame=T, arrow=F)
+
+# Carte par département
+mapdon <- left_join(map_dept, don_dept) %>% 
+          mutate(vot = vot5, pct = 100*vot5/exp) %>%
+          select(vot,pct)
+mf_map(mapdon, type="choro", var="pct", 
+       breaks=mybreaks,
+       pal=mypal,
+       leg_val_rnd = 0, leg_pos = "left", leg_title = "% suffrages exprimés")
+mf_map(mapdon, type="prop", var="vot", inches = 0.1, leg_pos="topleft", leg_title = "Nb. de voix")
+mf_layout(title = "Vote Bardella aux élections européennes de 2024 par régions",
+          credits = "Source : INSEE, IGN, Ministère de l'Intérieur",
+          frame=T, arrow=F)
+
+# Carte par circonscription (zoom sur l'Occitanie)
+mapdon <- left_join(map_circ, don_circ) %>% 
+          filter(regi_nom=="Occitanie") %>%
+          mutate(vot = vot5, pct = 100*vot5/exp) %>%
+          select(vot,pct)
+mf_map(mapdon, type="choro", var="pct", 
+       breaks=mybreaks,
+       pal=mypal,
+       leg_val_rnd = 0, leg_pos = "left", leg_title = "% suffrages exprimés")
+mf_map(mapdon, type="prop", var="vot", inches = 0.1, leg_pos="topleft", leg_title = "Nb. de voix")
+mf_layout(title = "Vote Bardella aux élections européennes de 2024 par circonscription en région Occitanie",
+          credits = "Source : INSEE, IGN, Ministère de l'Intérieur",
+          frame=T, arrow=F)
+
+
+
+```
+
+
+
+
+
+
+
+
+## Info session {.unnumbered}
 
 ```{r session_info, echo=FALSE}
 kableExtra::kable_styling(knitr::kable(rzine::sessionRzine()[[1]], row.names = F))
 kableExtra::kable_styling(knitr::kable(rzine::sessionRzine()[[2]], row.names = F))
 ```
 
-## Citation {-}
+## Citation {.unnumbered}
 
 ```{r Citation, echo=FALSE}
 rref <- bibentry(
@@ -252,25 +392,25 @@ rref <- bibentry(
    keywords ="FOS: Other social sciences",
    language = "fr",
    publisher = "FR2007 CIST",
-   year = 2021,
+   year = 2024,
    copyright = "Creative Commons Attribution Share Alike 4.0 International")
 
-``` 
+```
 
 `r capture.output(print(rref))`
 
-### BibTex : {-}
+### BibTex : {.unnumbered}
 
 ```{r generateBibTex, echo=FALSE}
 
 writeLines(toBibtex(rref), "cite.bib")
 toBibtex(rref)
 
-``` 
+```
 
 <br/>
 
-## Glossaire {- #endnotes}
+## Glossaire {#endnotes .unnumbered}
 
 ```{js, echo=FALSE}
 
