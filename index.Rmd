@@ -55,47 +55,102 @@ library(RColorBrewer)
 
 # Introduction {.unnumbered}
 
-Rédigez en [langage de balisage **markdown**](https://fr.wikipedia.org/wiki/Markdown) pour mettre en forme votre texte.
-
-Si vous avez besoin de définir un mot/expression, utilisez la syntaxe suivante : Mot/expression à définir[^1]\
-La définition sera automatiquement ajoutée dans la partie [**Glossaire**](#endnotes).
-
-[^1]: **Mot/expression à définir** Définition du mot/expression... etc.
-
-Pour afficher une référence bibliographique, ajoutez-la dans le fichier biblio.bib en format [BibTeX](https://fr.wikipedia.org/wiki/BibTeX).\
-Vous pouvez ensuite l'appeler dans le corps document de cette manière : @R-base\
-Toutes les références indiquées dans le fichier biblio.bib sont automatiquement ajoutées dans la [**Bibliographie**](#bibliographie).
-
-Il est possible d'écrire des formules mathématiques en langage $\TeX$. Pour cela, il suffit de délimiter le contenu $\LaTeX$ par **un ou deux** symboles **\$**, ex :
-
-```         
-$$ y = \sqrt{\frac{1}{x + \beta}} $$ 
+```{r, eval=FALSE}
+listes<-readRDS("data/net/don_listes.RDS")
+kable(listes)
 ```
 
-En mode ***Inline*** (**1 \$**) , les formules sont incluses à l'intérieur du paragraphe courant, ex : $\sum_{i=1}^n X_i$\
-En mode ***Displayed*** (**2 \$**), elles apparaissent centrées et mises en exergue, ex : $$ y = \sqrt{\frac{1}{x + \beta}} $$
 
-Pour mettre en valeur un bloc de texte, vous pouvez utilisez une **div** ***alert-success*** [**bootstrap**](https://getbootstrap.com/docs/4.0/components/alerts/) comme ceci :
+# UN EXEMPLE PEDAGOGIQUE
 
-::: {.alert .alert-success role="alert"}
-Mettre en valeur un bloc de texte...
-:::
+Afin de bien comprendre la différence entre classification et régionalisation et l'importance de la pondération, nous allons commencer par un exemple très simple portant sur la distribution des votes pour les deux principales listes d'extrême droite dans les 12 régions de France Métropolitaine.
 
-Pour afficher une information importante, vous pouvez utilisez une **div** ***alert-danger*** [**bootstrap**](https://getbootstrap.com/docs/4.0/components/alerts/) comme ceci :
+## Présentation des données
 
-::: {.alert .alert-danger role="alert"}
-Afficher une information importante...
-:::
 
-Pour afficher une image dans le corps du document, utilisez un chunk :
+On calcule le pourcentage de suffrages exprimés pour les listes conduites par Jordan Bardella (liste n°5 , RN) et Marion Maréchal (liste n°3, Reconquête) à l'échelle des 12 régions de France Métropolitaine (hors Corse). On obtient le tableau suivant :
 
-```{r, echo=FALSE, out.width="50%",  fig.align = 'center'}
-knitr::include_graphics("figures/rzine.png")
+```{r}
+don <-readRDS("data/net/don_regi.RDS") %>%
+       mutate(Bardella = 100*vot5/exp,
+              Marechal = 100*vot3/exp) %>%
+       select(regi, regi_nom, Bardella, Marechal) %>% 
+  arrange(regi)
+don$regi_code<-c("IDF","CVDL","BOFC","NORM","HDFR","GEST","PDLO","BRET",
+                 "NAQU","OCCI","AURA","PACA")
+don<-don[,c(1,5,2,3,4)]
+kable(don, caption = "Part des suffrages exprimés pour les listes Bardella et Marechal aux élections européennes de 2024  par région", digits = 1)
 ```
 
-# Partie A
+### Paramètres principaux
 
-## Partie A.1
+L'examen des paramètres statistiques des deux listes est effectué à l'intérieur des 12 régions étudiées en excluant la Corse et les DROM. Les valeurs sont dont légèrement différentes des résultats obtenus pour la France entière.
+
+
+```{r}
+min<-apply(don[,4:5],2,min)
+max<-apply(don[,4:5],2,max)
+moy<-apply(don[,4:5],2,mean)
+ect<-apply(don[,4:5],2,sd)
+var<-ect**2
+cv<-100*ect/moy
+tab<-cbind(min,max,moy,ect,var,cv)
+row.names(tab)<-c("Bardella","Marechal")
+kable(tab,
+      caption = "Paramètres principaux des deux listes ", 
+      col.names = c("minimum", "maximum", "moyenne","écart-type","variance","coeff. variation (%)"),
+        
+      digits=1)
+```
+
+<div class="alert alert-success" role="alert">
+-**Commentaire** : La liste Bardella obtient une moyenne (non pondérée) de 32.9% dans les 12 régions avec des scores allant de 18.8% en Ile-de-France à 42.7% dans les Hauts-de-France. La liste Maréchal affiche quant à elle des scores de 4.2% en Bretagne à 7.7% en PACA avec une moyenne de 5.3%. La variation absolue des résultat, mesurée par l'écart-type est logiquement beaucoup plus forte pour Bardella ($\sigma=6.5$) que pour Maréchal ($\sigma=0.9$). Mais les variations relatives mesurées par le coefficient de variation (rapport entre l'écart-type et la moyenne) sont assez voisines avec 19.9% pour Bardella et 16.7% pour Maréchal.</div>
+
+### Distribution spatiale
+
+On cartographie la distribution des deux variables en quatre classes à l'aide de la méthode des quantiles (soit trois régions par classe) et on examine la forme des histogrammes correspondant.
+
+
+```{r Exemple1, fig.width=7, fig.height=8}
+## Charge le fonds de carte
+map<-readRDS("data/net/map_regi.RDS")
+
+## effectue la jointure
+mapdon<-left_join(map,don)
+
+## Cartographie
+par(mfrow=c(2,2), cex.main=0.8)
+mf_map(mapdon, 
+       type="choro", 
+       var="Bardella", 
+       nbreaks = 4,
+       method = "quantile",
+       leg_title = "en %", 
+       leg_val_rnd = 1)
+mf_layout("Vote Bardella", frame=T, credits = "", arrow=F)
+mf_map(mapdon, 
+       type="choro", 
+       var="Marechal", 
+       nbreaks = 4,
+       method = "quantile",
+       leg_title = "en %", 
+       leg_val_rnd = 1)
+mf_layout("Vote Marechal", frame=T, credits = "", arrow=F)
+
+mf_distr(don$Bardella, nbins=4, bw=sd(don$Bardella))
+mf_distr(don$Marechal, nbins=4,bw = sd(don$Marechal))
+
+```
+<div class="alert alert-success" role="alert">
+-**Commentaire** : La distribution des votes Bardella est légèrement dissymétrique à droite avec une valeur exceptionellement faible correspondant à l'Ile-de-France. La distribution de Maréchal est au contraire dissymétrique à gauche avec une valeur exceptionnellement forte correspondant à la région PACA. La comparaison des deux distributions spatiales ne semble pas révéler à première vue de corrélation positive ou négative.</div>
+
+
+
+
+
+
+
+
 
 ### Partie A.1.1
 
@@ -296,6 +351,10 @@ kable(m, caption = "Description des listes")
 On vérifie tout d'abord que la procédure d'agrégation a bien donné bien les mêmes totaux au niveau des circonscriptions, départements et régions. Il apparaît que pour chaque niveau le nombre total d'inscrits est bien le même et il ne semble pas utile de vérifier les autres colonnes.
 
 ```{r}
+# Chargement des données statistiques
+don_circ <- readRDS("data/net/don_circ.RDS")
+don_dept <- readRDS("data/net/don_dept.RDS")
+don_regi <- readRDS("data/net/don_regi.RDS")
 sum(don_circ$ins)
 sum(don_dept$ins)
 sum(don_regi$ins)
@@ -312,10 +371,7 @@ map_circ <- readRDS("data/net/map_circ.RDS")
 map_dept <- readRDS("data/net/map_dept.RDS")
 map_regi <- readRDS("data/net/map_regi.RDS")
 
-# Chargement des données statistiques
-don_circ <- readRDS("data/net/don_circ.RDS")
-don_dept <- readRDS("data/net/don_dept.RDS")
-don_regi <- readRDS("data/net/don_regi.RDS")
+
 
 # Choix de la palette et des classes
 mypal <-brewer.pal(9,"Blues")
