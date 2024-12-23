@@ -583,7 +583,11 @@ Préalablement à ces analyses, il est important d'analyser la distribution des 
 
 ## Identification des listes de portée nationale
 
-Les électeurs français ont eu le choix entre 38 listes lors des élections européennes de juin 2024. Mais seule une partie d'entre elles a connu une audience nationale et beaucoup de petites listes n'ont même pas été capable de fournir des bulletins dans tous les bureaux de votes.La distribution du pourcentage de votes en fonction du rang des listes suit une loi exponentielle presque parfaite ($r^2 =0.98 , p < 0.001$)
+Les électeurs français ont eu le choix entre 38 listes lors des élections européennes de juin 2024. Mais seule une partie d'entre elles a connu une audience nationale et beaucoup de petites listes n'ont même pas été capable de fournir des bulletins dans tous les bureaux de votes.
+
+### Loi rang-taille ?
+
+La distribution du pourcentage de votes en fonction du rang des listes suit une loi exponentielle presque parfaite ($r^2 =0.98 , p < 0.001$)
 
 ```{r, results = 'asis'}
 # métadonnées
@@ -618,6 +622,8 @@ ggplot(listes, aes(x=rang,y=pct, label=tete_nom)) +
 ```
 
 
+### Typologie
+
 
 La régularité de la loi précédente ne permet pas d'établir une rupture nette permettant de séparer grandes et petites listes. Mais une typologie combinant le logarithme du score national en % et l'indice de concentration de Gini par circonscription permet de mieux distinguer des listes mineures ayant obtenu des votes dans un petit nombre de circonscription et des listes d'audience nationale ayant obtenu des voix dans un nombre plus important de circonscriptions même lorsque leur score est faible. 
 
@@ -635,7 +641,8 @@ listes$gini<-apply(mat,2,Gini)
 tab<-cbind(log(listes$pct), listes$gini)
 w<-kmeans(tab,centers = 2,iter.max = 1000)
 listes$type<-as.factor(w$cluster)
-levels(listes$type) <-c("Listes mineures","Listes nationales")
+levels(listes$type)
+levels(listes$type) <-c("Listes nationales","Listes mineures")
 
 ggplot(listes, aes(x=pct,y=gini, label = tete_nom, colour=type)) +
        geom_point() +
@@ -651,6 +658,141 @@ ggplot(listes, aes(x=pct,y=gini, label = tete_nom, colour=type)) +
 ::: {.alert .alert-success role="alert"}
 Il existe une corrélation négative entre le score national d'une liste et sa concentration mesurée par l'indice de Gini. Les listes les plus impôrtantes sont en général celles qui sont le mieux réparties tandis que les petites listes ont en général concentrés les suffrages dans quelques circonscriptions. Cette règle connaît toutefois des exceptions. Ainsi la liste "*Alliance rurale*" conduite par Jean Lassalle, bien implanté dans le Sud-Ouest, a obtenu un score national assez élevé (2.4%) tout en affichant un indice de concentration assez fort (0.41). Inversement, la liste du parti NPA "*Pour un Monde sans fronières ni patrons ...*" conduite par Selma Labib a recuilli très peu de voix (0.16%) mais beaucoup mieux réparties dans un nombre important de ciconscriptions avec un indice de concentration faible (0.16)  comparable à celui des listes les plus importantes.
 :::
+
+
+
+## Echelle départementale
+
+
+### Matrice de dissimilarité
+
+On choisit comme matrice de dissimilarité le coefficient de divergence c'est-à-dire la part des électeurs qui devraient changer de votes pour que les deux unités spatiales affichent le même profil électoral. Cet indice correspond à la moitié de la distance de Manhattan entre les profils en pourcentage :
+
+
+$\frac{1}{2} \sum_{p=1}^{38} {|\frac{X_{ip}}{X_{i.}} - \frac{X_{jp}}{X_{j.}}|}$
+
+
+On peut illustrer le calcul en prenant l'exemple de la plus forte dissimilarité qui est observée entre le département de l'Aisne (02) et le département de Paris (75) :
+
+```{r}
+# Jointure
+map<-readRDS("data/net/map_dept.RDS")
+don<-readRDS("data/net/don_dept.RDS")
+mapdon<-left_join(map,don)
+matdon<-as.matrix(st_drop_geometry(mapdon[12:49]))
+matdon<-100*matdon/apply(matdon,1,sum)
+rownames(matdon)<-mapdon$dept
+colnames(matdon)<-listes$tete_nom
+
+# Dissimilarité
+dissim<-dist.ldc(matdon,method = "manhattan")/2
+as.matrix(dissim)[c("02","80","75","92"),c("02","80","75","92")]
+
+# Exemple
+x<-data.frame(t(matdon[c("02","75"),]))
+names(x)<-c("Aisne (02)", "Paris (75)")
+x$dif<-x[,1]-x[,2]
+x$difabs<-abs(x$dif)
+total<-apply(x,2,sum)
+x<-rbind(x,total)
+row.names(x)[39]<-"Total"
+kable(x,digits=1,)
+
+
+
+```
+::: {.alert .alert-success role="alert"}
+La somme des différences de vote est égale à 94.5 points de pourcentage. En divisant par deux on obtient une valeur de 47.2 qui est le pourcentage de vote qu'il faudrait modifier dans l'un ou l'autre département pour aboutir à des profils similaires. Le coefficient de divergence est compris entre 0 (votes identiques) et 100 (aucun vote commun). 
+:::
+
+
+### Classification
+
+L'application d'une méthode de classification ascendante hiérarchique à la matrice de dissimilarité fait apparaître assez nettement cinq classes qui regroupent souvent des départements voisins mais sans pour autant former des régions. 
+
+```{r}
+cah<-hclust(dissim, method="ward.D")
+par(mfrow=c(1,2))
+plot(cah, hang=-1, cex=0.5, main= "Arbre de classification")
+clas<-as.factor(cutree(cah,5))
+mapdon$cah<-as.factor(clas)
+mf_map(mapdon, type="typo",var="cah", leg_title = "Classes")
+mf_layout("Classification des départements", credits="Mehode de Ward appliquée à la distance de divergence", frame = T, scale = T, arrow=F)
+```
+
+Une analyse des profils permet ensuite de caractériser ces classes. 
+
+```{r}
+
+tabres<-data.frame(matdon)
+tot <- as.numeric(tabres %>% summarise_all(.funs= c("mean")))
+tabres$clas<-clas
+res<-tabres %>% group_by(clas) %>% summarise_all(.funs= c("mean"))
+mat<-res[,-1]
+for(i in 1:5){mat[i,]<-mat[i,]-as.matrix(tot)}
+mat<-t(mat)
+colnames(mat)<-c("Classe1","Classe2","Classe3","Classe4","Classe5")
+mat<-as.data.frame(mat)
+mat$Profil<-tot
+mat<-mat[order(-mat$Profil),]
+kable(mat[1:13,],digits=2,caption = "Ecart des classes au profil moyen (listes principales)" )
+```
+
+::: {.alert .alert-success role="alert"}
+- la **classe 1**  est assez proche du **profil moyen** avec une légère sur-représentation des votes Bardella (+1.5) et Aubry (+0.79), associée à une sous-représentation des votes Glucksman (-0.91), Lassalle (_0.79), Hayer (-0.55) et Bellamy (-0.32).
+- la **classes 2** est caractérisée par la **très forte surreprésentation du vote d'extrême droite** pour Bardella (+7.5),  Maréchal (+0.38) ou Philippot (+0.05) ainsi que le parti animaliste (+0.2) associé à une sous-représentation des autres partis, en particulier de Glucksmann (-2.78) et Toussaint.
+- la **classe 3** surreprésente les votes des **partis centristes**, qu'il s'agisse du centre-gauche (Hayer : +2.56), du centre-droit (Glucksman : +2.01) ou des écologistes (Toussaint : +1.15) et elle sous-représente les partis d'extrême-droite mais aussi d'extrême gauche. 
+- la **classe 4** s'inscrit plutôt dans **une spécificité régionale du Sud-Ouest** caractérise par l'importance du vote Lassalle (+3.66) et du vote Deffontaines (+0.75), associé au vote de centre-gauche de la liste Glucksmann (+2.46). Comme dans le cas précédent, on observe une faiblesse du vote pour les partis d'extrême droite ou d'extrême gauche. 
+- la **classe 5** correspond enfin à un **vote des grandes métropoles** caractérisé par un score exceptionnel de la liste Aubry (+8.59), associé à une surreprésentation des votes pour les autres partis de gouvernement de droite (Bellamy : +1.06, Hayer : +1.23) ou de gauche (Glucksmann : +2.85, Toussaint : +2.44)
+:::
+
+
+
+
+
+```{r}
+
+```
+
+
+
+### Autocorrélation spatiale
+
+
+```{r}
+# Jointure
+map<-readRDS("data/net/map_circ.RDS")
+don<-readRDS("data/net/don_circ.RDS")
+mapdon<-left_join(map,don)
+matdon<-as.matrix(st_drop_geometry(mapdon[12:50]))
+matdon<-100*matdon/apply(matdon,1,sum)
+row.names(matdon)<-mapdon$circ
+
+# Contiguïté
+cont<-poly2nb(mapdon)
+contw<-nb2listw(cont)
+
+# Moran
+mymoran<-function(x,w){moran.test(x,w)$estimate[1]}
+z<-apply(matdon,2,mymoran,contw)
+listes$moran<-z
+
+plot(log(listes$pct),listes$moran)
+plot(mapdon['vot14'],lwd=0.1)
+```
+
+
+##
+
+
+
+```{r}
+dis<-dist(matdon,method = "manhattan")
+w<-hclust(dis,method = "ward.D2",)
+barplot(log(rev(w$height)[1:15]))
+mapdon$clus8<-as.factor(cutree(w,13))
+plot(mapdon['clus8'],lwd=0.1)
+```
 
 
 
