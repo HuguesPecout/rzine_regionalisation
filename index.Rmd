@@ -5,7 +5,7 @@ date: "`r Sys.Date()`"
 author: 
  - name: CLaude GRASLAND
    affiliation: Université Paris Cité - département de géographie,  UMR 8504 Géographie-cités - équipe TERMS
-image: "featured.png"   
+image: "figures/exemple_regio.jpg"   
 logo: "figures/rzine.png"  
 output:
   rzine::readrzine:
