@@ -1085,7 +1085,83 @@ kable(mat[1:13,],digits=2,caption = "Ecart des classes au profil moyen (listes p
 - **Les espaces périphériques marginalisés (Periph. 2)** se caractérisent par une forte surrepéresentation du vote Bardella et une faiblesse du vote pour l'ensemble des autres partis de gouvernement. 
 :::
 
-Comme on peut le constater, cette configuration des classes est a priori très défavorable à la constitution de régions sauf à fusionner les différents types mis en évidence par la classification.
+
+
+
+## Régionalisation
+
+
+Comme on peut le constater, cette configuration des classes est a priori très défavorable à la constitution de régions sauf à fusionner les différents types mis en évidence par la classification. La carte des discontinuités entre les circonscriptions confirme l'existence de très fortes différences entre les zones urbaines et les espaces périurbainsou ruraux qui les entourent.
+
+```{r}
+
+# Met en colonnes la matrice de dissimilarité 
+m<-as.matrix(dissim)
+tabdis<-melt(m,as.is = TRUE)
+names(tabdis)<-c("i","j","DSij")
+
+# Extrait les frontières d'unités spatiale
+#library(cartography)
+maplim<-getBorders(mapdon)
+names(maplim)<-c("codelim","i","j","geometry")
+
+# Effectue la jointure
+maplim<-merge(maplim, tabdis, by=c("i","j"))
+
+
+# Visualise les dissimilarités les plus fortes
+par(mfrow=c(1,1))
+mf_map(mapdon, type="base",col="lightyellow")
+mf_map(maplim, type="prop", col="red",var="DSij", val_max = 70, leg_pos = "left")
+mf_layout("Cartographie des discontinuités", frame=T, 
+          credits = "Grasland C., 2025")
+
+
+```
+
+L'application de l'algorithme de régionalisation conduit pourtant à identifier des niveaux de découpage pertinents en 2, 3, 5 ou 12 régions. 
+
+```{r}
+neighbors <- listw2sn(contw)[,1:2]
+regio<-constr.hclust(d=dissim, method="ward.D", links=neighbors)
+
+
+
+par(mfrow=c(1,2), mar=c(3,2,3,0))
+
+plot(regio, main="Arbre de classification", hang=-1, cex = 0.7)
+barplot(rev(regio$height)[1:20], main = "Hiérarchie des noeuds",names.arg = 1:20,cex.names = 0.4)
+
+
+```
+
+La caertogaphie des découpages en 5 et 11 régions produit des résultats intéressants même si leur pouvoir explicatif est plus faible que celui de la classification. 
+
+```{r, fig.height=8}
+
+mapdon$reg5<-as.factor(cutree(regio,5))
+mapdon$reg11<-as.factor(cutree(regio,11))
+mapdon2$reg5<-as.factor(cutree(regio,5))
+mapdon2$reg11<-as.factor(cutree(regio,11))
+
+par(mfrow=c(2,2))
+
+mf_map(mapdon, var="reg5",type="typo", leg_title = "Classes",lwd=0.4)
+mf_layout("5 régions",credits = "", scale=T, frame=T, arrow=F)
+
+mf_map(mapdon2, var="reg5",type="typo", leg_title = "Classes", lwd=0.4)
+mf_layout("5 régions",credits = "", scale=T, frame=T, arrow=F)
+
+mf_map(mapdon, var="reg11",type="typo", leg_title = "Classes", lwd=0.4)
+mf_layout("11 régions",credits = "", scale=T, frame=T, arrow=F)
+
+mf_map(mapdon2, var="reg11",type="typo", leg_title = "Classes", lwd=0.4)
+mf_layout("11 régions",credits = "", scale=T, frame=T, arrow=F)
+```
+
+Sans reprendre en détail l'analyse des profils de classe, on voit que la régionalisation en cinq classes est assez proche des résultats obtenus à l'échelle des départements. On retrouve en effet la singularité de l'Ile de France, de la Seine-Saint-Denis, de l'Ouest et dunord du bassin parisien. Quant à la régionalisation en 11 classes, elle met en valeur la singularité des trois plus grandes métropoles provinciales (Lille, Lyon, Marseille) ainsi qu les spécificiés du Sud-Ouest et des Alpes. 
+
+Le changement d'échelle ne modifie donc pas radicalement les conclusions obtenues au niveau départemental puisque les métropoles de taille moyenne (Rennes, Nantes, Bordeaux, Toulouse, Strasbourg, ...) sont absorbées par les circonscriptions voisines. Seules les métropoles de taille suffisante pour se subdiviser en plusieurs circonscriptions législatives arrivent à émerger comme régions à cette échelle. 
 
 
 # Bibliographie {#bibliographie .unnumbered}
