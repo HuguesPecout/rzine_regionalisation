@@ -25,10 +25,13 @@ link-citations: true
 # 5 possible choices : "by-nd", "by", "by-nc-sa", "by-nc","by-sa"
 ---
 
-```{r setup, include=FALSE}
+> La combinaison des méthodes de classification et de régionalisation est facilitée par le développement d'une nouvelle fonction du package **adespatial** qui permet de regrouper les unités spatiales les plus ressemblantes en respectant la contrainte de connexité. Mis au point par des écologues canadien, cette méthode de classification ascendante hiérarchique avec contrainte de contiguïté est beaucoup plus simple d'emploi et beaucoup plus efficace que les autres méthodes de régionalisation disponible actuellement dans le package Rgeoda. Elle s'appuie sur un corpus théorique d'analyse spatiale de la biodiversité des espaces animales ou végétales que l'on peut transposer à de nombreux problèmes géographiques. Nous prenons ici comme exemple l'analyse du résultat des élections européennes de 2024 en Frandce à trois niveaux d'agrégation : régions adminisratives , départements et circonscriptions législatives. 
+
+
+```{r setup,  echo=TRUE}
 
 ## Global options
-knitr::opts_chunk$set(echo=FALSE,
+knitr::opts_chunk$set(echo=TRUE,
         	            cache=FALSE,
                       prompt=FALSE,
                       comment=NA,
@@ -64,7 +67,7 @@ library(adespatial)
 
 ```
 
-> La combinaison des méthodes de classification et de régionalisation est facilitée par le développement d'une nouvelle fonction du package **adespatial** qui permet de regrouper les unités spatiales les plus ressemblantes en respectant la contrainte de connexité. Mis au point par des écologues canadien, cette méthode de classification ascendante hiérarchique avec contrainte de contiguïté est beaucoup plus simple d'emploi et beaucoup plus efficace que les autres méthodes de régionalisation disponible actuellement dans le package Rgeoda. Elle s'appuie sur un corpus théorique d'analyse spatiale de la biodiversité des espaces animales ou végétales que l'on peut transposer à de nombreux problèmes géographiques. Nous prenons ici comme exemple l'analyse du résultat des élections européennes de 2024 en Frandce à trois niveaux d'agrégation : régions adminisratives , départements et circonscriptions législatives. 
+
 
 # Introduction {.unnumbered}
 
