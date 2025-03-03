@@ -25,7 +25,7 @@ link-citations: true
 # 5 possible choices : "by-nd", "by", "by-nc-sa", "by-nc","by-sa"
 ---
 
-> La combinaison des méthodes de classification et de régionalisation est facilitée par le développement d'une nouvelle fonction du package **adespatial** qui permet de regrouper les unités spatiales les plus ressemblantes en respectant la contrainte de connexité. Mis au point par des écologues canadien, cette méthode de classification ascendante hiérarchique avec contrainte de contiguïté est beaucoup plus simple d'emploi et beaucoup plus efficace que les autres méthodes de régionalisation disponible actuellement dans le package Rgeoda. Elle s'appuie sur un corpus théorique d'analyse spatiale de la biodiversité des espaces animales ou végétales que l'on peut transposer à de nombreux problèmes géographiques. Nous prenons ici comme exemple l'analyse du résultat des élections européennes de 2024 en Frandce à trois niveaux d'agrégation : régions adminisratives , départements et circonscriptions législatives. 
+> La combinaison des méthodes de classification et de régionalisation est facilitée par le développement d'une nouvelle fonction du package **adespatial** qui permet de regrouper les unités spatiales les plus ressemblantes en respectant la contrainte de connexité. Mis au point par des écologues canadien, cette méthode de classification ascendante hiérarchique avec contrainte de contiguïté est beaucoup plus simple d'emploi et beaucoup plus efficace que les autres méthodes de régionalisation disponible actuellement dans le package Rgeoda. Elle s'appuie sur un corpus théorique d'analyse spatiale de la biodiversité des espaces animales ou végétales que l'on peut transposer à de nombreux problèmes géographiques. Nous prenons ici comme exemple l'analyse du résultat des élections européennes de 2024 en France à trois niveaux d'agrégation : régions adminisratives , départements et circonscriptions législatives. 
 
 
 ```{r setup,  echo=TRUE}
@@ -114,7 +114,7 @@ kable(don, caption = "Part des suffrages exprimés pour les listes Bardella et M
 
 ### Paramètres principaux
 
-L'examen des paramètres statistiques des deux listes est effectué à l'intérieur des 12 régions étudiées en excluant la Corse et les DROM. Les valeurs sont dont légèrement différentes des résultats obtenus pour la France entière.
+L'examen des paramètres statistiques des deux listes est effectué à l'intérieur des 12 régions étudiées en excluant la Corse et les DROM. Les valeurs sont donc légèrement différentes des résultats obtenus pour la France entière.
 
 ```{r}
 min<-apply(don[,4:5],2,min)
@@ -269,7 +269,7 @@ tabres  %>% gt(rownames_to_stub = T) %>%
 ```
 
 ::: {.alert .alert-success role="alert"}
-**Commentaire** : Par rapport à la représentation dans l'espace non-standardisé il y a désormais un étirement comaprable du nuage de point dans les deux directions de l'espace standardisé. Ce résultat est logique puisque les écart-types sont désormais égaux pour les deux candidats ce qui signifie que les différences liées au vote Maréchal vont jouer le même rôle que celles liées au vote Bardella. Les deux unités spatiales les plus différentes ne sont plus l'Ile-de-France (IDF) et les Hauts-de-France (HDFR) mais la Bretagne (BRET) et la région Provence-Alpes-Côte d'Azur (PACA). Ce que l'on peut facilement vérifier en calculant la distance euclidienne sur variables standardisées.
+**Commentaire** : Par rapport à la représentation dans l'espace non-standardisé il y a désormais un étirement comparable du nuage de point dans les deux directions de l'espace standardisé. Ce résultat est logique puisque les écart-types sont désormais égaux pour les deux candidats ce qui signifie que les différences liées au vote Maréchal vont jouer le même rôle que celles liées au vote Bardella. Les deux unités spatiales les plus différentes ne sont plus l'Ile-de-France (IDF) et les Hauts-de-France (HDFR) mais la Bretagne (BRET) et la région Provence-Alpes-Côte d'Azur (PACA). Ce que l'on peut facilement vérifier en calculant la distance euclidienne sur variables standardisées.
 :::
 
 ### Espace des variables ordinales
@@ -315,7 +315,7 @@ tabres  %>% gt(rownames_to_stub = T) %>%
 
 Il existe de nombreuses autres solutions permettant de transformer le petit tableau de données en d'autres matrices de dissimilarité tout aussi légitimes que les trois présentées ci-dessus. On pourrait par exemple utiliser une autre métrique telle que distance de Tchebychev qui est la magnitude absolue maximale des différences entre les coordonnées des points.
 
-Le point important à retenir avant de passer à la suite des analyses est que **le choix de la matrice de dissimilarité exerce une influence cruciale sur les résultats des méthodes de classification ou de régionalisation qui vo,nt être mise en oeuvre**. Or, ce choix est trop souvent implicite dans les logiciels de statistiques qui proposent par défaut des méthodes fondées sur la **variance** c'est-à-dire sur le **carré des distances euclidiennes standardisées**. Ce choix est le plus souvent justifié car il évite aux débutants en statistique des erreurs fatales telles que le fait de ne pas standardiser un jeu de variables hétérogènes ayant des unités de mesure et des ordres de grandeur différents. Mais il peut aussi aboutir à des résultats discutables ou du moins pas forcément les plus adaptés à la problématique.
+Le point important à retenir avant de passer à la suite des analyses est que **le choix de la matrice de dissimilarité exerce une influence cruciale sur les résultats des méthodes de classification ou de régionalisation qui vont être mise en oeuvre**. Or, ce choix est trop souvent implicite dans les logiciels de statistiques qui proposent par défaut des méthodes fondées sur la **variance** c'est-à-dire sur le **carré des distances euclidiennes standardisées**. Ce choix est le plus souvent justifié car il évite aux débutants en statistique des erreurs fatales telles que le fait de ne pas standardiser un jeu de variables hétérogènes ayant des unités de mesure et des ordres de grandeur différents. Mais il peut aussi aboutir à des résultats discutables ou du moins pas forcément les plus adaptés à la problématique.
 
 ## Classification
 
@@ -343,7 +343,7 @@ Pour assurer une bonne comparabilité des résultats de classification et de ré
 
 ### Comparaison des classifications
 
-Nous allons examiner les résultats des classifications opérées sur les matrices de dissimilarité en distance euclidienne sur variables standardisées ou non standardisées et en distance de Manhtattan sur variables ordinales avec la même méthode *Ward.D*. Nous examinerons également dans chaque cas la distribution géographique des résultats pour une partition en deux classes afin de voir si les classes obtenues correspondent ou non à une régionalisation de la France
+Nous allons examiner les résultats des classifications opérées sur les matrices de dissimilarité en distance euclidienne sur variables standardisées ou non standardisées et en distance de Manhtattan sur variables ordinales avec la même méthode *Ward.D*. Nous examinerons également dans chaque cas la distribution géographique des résultats pour une partition en trois classes afin de voir si les classes obtenues correspondent ou non à une régionalisation de la France
 
 ```{r, fig.width=6, fig.height=9}
 par(mfrow=c(3,2), mar=c(2,4,3,0))
@@ -402,9 +402,10 @@ Les trois classifications aboutissent logiquement à des regroupements différen
 ## Régionalisation
 
 La fonction `constr.hclust()` du package adespatial permet de réaliser une classification ascendante hiérarchique sous contrainte de contiguïté en suivant un algorithme strictement comparable à celui d'une classification. La seule différence réside dans le fait d'éliminer des solutions en interdisant le regroupement d'unités spatiales si elles ne sont pas voisines ou, plus précisément connexes.
+
 ### Graphe de proximité
 
-Pour bien comprendre la différence entre classification et régionalisation, il est intéressant de visualiser cartogra\^phiquement les matrices de contiguïté associés à chacune des deux méthodes.
+Pour bien comprendre la différence entre classification et régionalisation, il est intéressant de visualiser cartographiquement les matrices de contiguïté associés à chacune des deux méthodes.
 
 -   la **classification** fait appel implicitement à un *graphe complet* qui est non planaire et dans lequel toutes les fusions d'unités spatiales en classes sont autorisées, qu'elles soient voisines ou non, connexes ou non.
 
@@ -749,7 +750,7 @@ kable(mat[1:13,],digits=2,caption = "Ecart des classes au profil moyen (listes p
 
 ### Matrice de contiguïté
 
-On calcule la matrice de continguïté au niveau départemental à l'aide des fonctions`poly2nb()` et `nb2listw()`du package **spdep**. Puis on les viusalise cartographiquement.
+On calcule la matrice de continguïté au niveau départemental à l'aide des fonctions`poly2nb()` et `nb2listw()`du package **spdep**. Puis on les cartographie.
 
 ```{r}
 # Contiguïté
@@ -918,7 +919,7 @@ Quels sont les apports respectifs des deux approches de régionalisation et de c
 
 ### Intérêt et limites de la classification
 
-L'analyse de classification offre obligatoirement un meilleur résumé de l'information contenue dans la matrice de dissimilarité dans la mesure où elle ne subit pas la contrainte de contiguïté qui est imposée à la régionalisation. Même si la méthode de classification ascendante hhiérarchique n'aboutit pas nécessairement à une solution optimale en matière de maximisation de l'homogénéité intra-classe et de l'hétérogénéité inter-classe (la méthode des k-means est a priori plus efficace mais plus coûteuse en temps de calcul), elle présente l'avantage de fournir des résumés à différents niveaux d'agrégation et de distinguer des types et des sous-types à l'intérieur de ceux-ci.
+L'analyse de classification offre obligatoirement un meilleur résumé de l'information contenue dans la matrice de dissimilarité dans la mesure où elle ne subit pas la contrainte de contiguïté qui est imposée à la régionalisation. Même si la méthode de classification ascendante hiérarchique n'aboutit pas nécessairement à une solution optimale en matière de maximisation de l'homogénéité intra-classe et de l'hétérogénéité inter-classe (la méthode des k-means est a priori plus efficace mais plus coûteuse en temps de calcul), elle présente l'avantage de fournir des résumés à différents niveaux d'agrégation et de distinguer des types et des sous-types à l'intérieur de ceux-ci.
 
 La limite de la méthode concerne sa visualisation cartographique qui laisse apparaître des blocs régionaux mais qui correspondent rarement à une classe unique. Les résultats n'ont pas vocation à produire une géographie du vote même si le commentaire des résultats fait appel à des notions de proximité et de localisation.
 
@@ -1125,7 +1126,7 @@ barplot(rev(regio$height)[1:20], main = "Hiérarchie des noeuds",names.arg = 1:2
 
 ```
 
-La caertogaphie des découpages en 5 et 11 régions produit des résultats intéressants même si leur pouvoir explicatif est plus faible que celui de la classification.
+La cartogaphie des découpages en 5 et 11 régions produit des résultats intéressants même si leur pouvoir explicatif est plus faible que celui de la classification.
 
 ```{r, fig.height=8}
 
