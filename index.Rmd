@@ -1,6 +1,6 @@
 ---
 title: "Classification et régionalisation"
-subtitle: "Application aux résultats des élections européennes de 2024 en France métropolitiane"
+subtitle: "Application aux résultats des élections européennes de 2024 en France métropolitaine"
 date: "`r Sys.Date()`"
 author: 
  - name: CLaude GRASLAND
